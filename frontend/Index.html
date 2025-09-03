@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Organizador de Links</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Organizador de Links</h1>
+
+    <form id="link-form" class="card">
+      <div class="row">
+        <label for="title">Título</label>
+        <input id="title" name="title" type="text" placeholder="Ex.: Documentação Express" required />
+      </div>
+
+      <div class="row">
+        <label for="url">URL</label>
+        <input id="url" name="url" type="url" placeholder="https://..." required />
+      </div>
+
+      <div class="row">
+        <label for="description">Descrição (opcional)</label>
+        <input id="description" name="description" type="text" placeholder="Breve descrição" />
+      </div>
+
+      <button type="submit">Adicionar</button>
+      <span id="msg" class="msg"></span>
+    </form>
+
+    <section class="card">
+      <h2>Meus Links</h2>
+      <ul id="links-list" class="list"></ul>
+    </section>
+  </main>
+
+  <script src="./script.js"></script>
+</body>
+</html>

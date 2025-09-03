@@ -1,0 +1,16 @@
+ {
+ "name": "organizador-links",
+  "version": "1.0.0",
+  "description": "Organizador de Links - Node.js + Express + Front HTML/CSS/JS",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js"
+  },
+  
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0"
+  }
+}
