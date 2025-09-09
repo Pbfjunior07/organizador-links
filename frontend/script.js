@@ -1,25 +1,3 @@
-const form = document.getElementById("linkForm");
-const linkList = document.getElementById("linkList");
-
-// Carregar links na inicialização
-async function loadLinks() {
-  const res = await fetch("/api/links");
-  const data = await res.json();
-  renderLinks(data);
-}
-
-function renderLinks(links) {
-  linkList.innerHTML = "";
-  links.forEach((link) => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <a href="${link.url}" target="_blank">${link.title}</a> - ${link.description || ""}
-      <button onclick="deleteLink(${link.id})">Excluir</button>
-    `;
-    linkList.appendChild(li);
-  });
-}
-
 const apiBase = '/api/links';
 const listEl = document.getElementById('links-list');
 const formEl = document.getElementById('link-form');
@@ -84,7 +62,7 @@ function renderList(links) {
 
 async function onEdit(link) {
   const title = prompt('Novo título:', link.title || '');
-  if (title === null) return; // cancelou
+  if (title === null) return;
   const url = prompt('Nova URL:', link.url || '');
   if (url === null) return;
   const description = prompt('Nova descrição:', link.description || '');
@@ -121,6 +99,12 @@ formEl.addEventListener('submit', async (e) => {
   e.preventDefault();
   const formData = new FormData(formEl);
   const payload = Object.fromEntries(formData.entries());
+
+  // Garantir que os campos vieram
+  if (!payload.title || !payload.url) {
+    setMsg('Título e URL são obrigatórios', true);
+    return;
+  }
 
   const res = await fetch(apiBase, {
     method: 'POST',

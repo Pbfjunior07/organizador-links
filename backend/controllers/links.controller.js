@@ -1,45 +1,63 @@
-let links = [];
-let idCounter = 1;
+const db = require("../db");
 
-function getAllLinks(req, res) {
-  res.json(links);
-}
+// Listar todos os links
+exports.getLinks = (req, res) => {
+  db.all("SELECT * FROM links", [], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(rows);
+  });
+};
 
-function createLink(req, res) {
-  const { title, url, description } = req.body;
+// Criar novo link
+exports.createLink = (req, res) => {
+  const { title, url } = req.body;
   if (!title || !url) {
     return res.status(400).json({ error: "Título e URL são obrigatórios" });
   }
 
-  const newLink = { id: idCounter++, title, url, description };
-  links.push(newLink);
-  res.status(201).json(newLink);
-}
+  const sql = "INSERT INTO links (title, url) VALUES (?, ?)";
+  db.run(sql, [title, url], function (err) {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.status(201).json({ id: this.lastID, title, url });
+  });
+};
 
-function updateLink(req, res) {
+// Deletar link
+exports.deleteLink = (req, res) => {
+  const { id } = req.params;
+  const sql = "DELETE FROM links WHERE id = ?";
+  db.run(sql, [id], function (err) {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    if (this.changes === 0) {
+      return res.status(404).json({ error: "Link não encontrado" });
+    }
+    res.json({ message: "Link excluído com sucesso" });
+  });
+};
+
+// Atualizar um link
+exports.update = (req, res) => {
   const { id } = req.params;
   const { title, url, description } = req.body;
 
-  const link = links.find((l) => l.id === parseInt(id));
-  if (!link) {
-    return res.status(404).json({ error: "Link não encontrado" });
+  if (!title || !url) {
+    return res.status(400).json({ error: "Title e URL são obrigatórios" });
   }
 
-  link.title = title || link.title;
-  link.url = url || link.url;
-  link.description = description || link.description;
-
-  res.json(link);
-}
-
-function deleteLink(req, res) {
-  const { id } = req.params;
-  const index = links.findIndex((l) => l.id === parseInt(id));
-  if (index === -1) {
-    return res.status(404).json({ error: "Link não encontrado" });
-  }
-  const deleted = links.splice(index, 1);
-  res.json(deleted[0]);
-}
-
-module.exports = { getAllLinks, createLink, updateLink, deleteLink };
+  const sql = "UPDATE links SET title = ?, url = ?, description = ? WHERE id = ?";
+  db.run(sql, [title, url, description, id], function (err) {
+    if (err) {
+      return res.status(400).json({ error: err.message });
+    }
+    if (this.changes === 0) {
+      return res.status(404).json({ error: "Link não encontrado" });
+    }
+    res.json({ message: "Link atualizado com sucesso", id, title, url, description });
+  });
+};
