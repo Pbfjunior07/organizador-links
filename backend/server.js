@@ -17,7 +17,7 @@ app.use(express.static(path.join(__dirname, "../frontend"))); // servir frontend
 app.use("/api/links", linksRoutes);
 
 // Rota fallback → garante que "/" e qualquer rota desconhecida devolvem o index.html
-app.get("*", (req, res) => {
+app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
 
